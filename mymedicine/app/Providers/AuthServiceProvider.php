@@ -4,16 +4,18 @@ namespace App\Providers;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Auth\Access\Response;
+use Illuminate\Support\Facades\Gate;
 
 class AuthServiceProvider extends ServiceProvider
 {
     /**
      * The policy mappings for the application.
      *
-     * @var array<class-string, class-string>
+     * @var array
      */
     protected $policies = [
-        // 'App\Models\Model' => 'App\Policies\ModelPolicy',
+        // 'App\Model' => 'App\Policies\ModelPolicy',
     ];
 
     /**
@@ -24,7 +26,36 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
+        Gate::define('delete-permission', 'App\Policies\SupplierPolicy@delete');
+        Gate::define('checkmember', 'App\Policies\MemberPolicy@checkmember');
 
-        //
+        Gate::define('update-post', 'App\Policies\PostPolicy@update');
+
+        Gate:
+        define('edit-settings', function ($user) {
+            return $user->isAdmin
+                ? Response::allow()
+                : Response::deny('You must be a super Administrator.');
+        });
+
+        Gate::before(function ($user, $ability) {
+            if ($user->isSuperAdmin()) {
+                return true;
+            }
+        });
+
+        Gate::after(function ($user, $ability, $result, $arguments) {
+            if ($user->isSuperAdmin()) {
+                return true;
+            }
+        });
+
+        // Gate::define('edit-settings',function ($user){
+        //     return $user->isAdmin;
+        // });
+
+        // Gate::define('update-post',function ($user,$post){
+        //     return $user->id === $post->user_id;
+        // });
     }
 }

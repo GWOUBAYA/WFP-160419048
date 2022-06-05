@@ -19,8 +19,8 @@ class MedicinesController extends Controller
         // $data = DB::select(DB::raw('select * from medicines'));
         // dd($data);
 
-        $data = DB::table('medicines')->join('categories', 'category_id', '=', 'categories.id')->where('categories.id', '=', 1)->get();
-        // $data = Medicines::all();
+        // $data = DB::table('medicines')->join('categories', 'category_id', '=', 'categories.id')->where('categories.id', '=', 1)->get();
+        $data = Medicines::all();
 
         return view('medicines.index', compact('data'));
     }
@@ -48,7 +48,26 @@ class MedicinesController extends Controller
             "categoryName" => $categoryName
         ]);
     }
-
+    public function front_index()
+    {
+        $medicines = Medicines::all();
+        return view('frontend.product', compact('medicines'));
+    }
+    public function addToCart($id)
+    {
+        $p = Medicines::find(id);
+        $cart = session()->get('cart');
+        if (!isset($cart[id])) {
+            $cart[$id] = [
+                'name' => $p->nama_produk,
+                'quantity' => 1, "price" => $p->price, "photo" => $p->image
+            ];
+        } else {
+            $cart[$id]["quantity"]++;
+        }
+        session()->put('cart', $cart);
+        return redirect()->back()->with('success', 'Product added to cart successfully!');
+    }
     /**
      * Get collection of Medicines with generic_name, form, price
      *
@@ -154,7 +173,8 @@ class MedicinesController extends Controller
      */
     public function edit(Medicines $medicines)
     {
-        //
+        $data = Medicines::find($medicines);
+        return view('medicines.edit', compact('data'));
     }
 
     /**
@@ -166,7 +186,11 @@ class MedicinesController extends Controller
      */
     public function update(Request $request, Medicines $medicines)
     {
-        //
+        $data  = Medicines::find($medicines);
+        $data->name = $request->get('name');
+        $data->description = $request->get('description');
+        $data->save();
+        return redirect()->route('medicines.index')->with('status', 'Supplier data changed');
     }
 
     /**

@@ -7,5 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Medicines extends Model
 {
-    use HasFactory;
+    public function category()
+    {
+        return $this->belongsTo(Categories::class, 'category_id');
+    }
+    public function transactions()
+    {
+        return $this->belongsToMany(Transactions::class, 'medicine_transaction', 'medicine_id', 'transaction_id')->withPivot('quantity', 'price');
+    }
 }

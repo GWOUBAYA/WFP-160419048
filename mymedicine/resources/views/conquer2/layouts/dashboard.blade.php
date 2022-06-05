@@ -11,22 +11,22 @@
     <meta name="MobileOptimized" content="320">
 
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
-    @include('admin.conquer2.style_theme')
+    @include('conquer2.style_theme')
     <!-- END THEME STYLES -->
 
 </head>
 
 <body class="page-header-fixed">
-    @include('admin.conquer2.partials.header')
+    @include('conquer2.partials.header')
 
     <div class="clearfix"> </div>
 
     <div class="page-container">
-        @include('admin.conquer2.partials.sidebar')
+        @include('conquer2.partials.sidebar')
 
         <div class="page-content">
             <div class="page-content-wrapper">
-                @include('admin.conquer2.js')
+                @include('conquer2.js')
                 @yield('content')
             </div>
         </div>

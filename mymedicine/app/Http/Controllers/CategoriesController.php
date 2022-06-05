@@ -131,9 +131,11 @@ class CategoriesController extends Controller
      * @param  \App\Models\Categories  $categories
      * @return \Illuminate\Http\Response
      */
-    public function edit(Categories $categories)
+    public function edit($categories)
     {
-        //
+        $data = Categories::find($categories);
+        return view('categories.edit', compact('data'));
+        // dd($data);
     }
 
     /**
@@ -143,9 +145,13 @@ class CategoriesController extends Controller
      * @param  \App\Models\Categories  $categories
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Categories $categories)
+    public function update(Request $request, $categories)
     {
-        //
+        $data = Categories::find($categories);
+        $data->name = $request->get('name');
+        $data->description = $request->get('description');
+        $data->save();
+        return redirect()->route('categories.index')->with('status', 'Supplier data changed');
     }
 
     /**
@@ -154,8 +160,16 @@ class CategoriesController extends Controller
      * @param  \App\Models\Categories  $categories
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Categories $categories)
+    public function destroy($categories)
     {
-        //
+        $data = Categories::find($categories);
+        // dd($data);
+        try {
+            $data->delete();
+            return redirect()->route('categories.index')->with('status', 'Data Supplier berhasil dihapus');
+        } catch (\PDOException $e) {
+            $msg = "Data Gagal Dihapus. Pastikan data child usdah hilang atau tidak berhubunga";
+            return redirect()->route('categories.index')->with('error', $msg);
+        }
     }
 }

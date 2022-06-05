@@ -14,8 +14,23 @@ class Authenticate extends Middleware
      */
     protected function redirectTo($request)
     {
-        if (! $request->expectsJson()) {
+        if (!$request->expectsJson()) {
             return route('login');
+        }
+        $role = Auth::user()->sebagai;
+        switch ($role) {
+            case 'owner':
+                return '/suppliers';
+                break;
+            case 'pegawai':
+                return '/products';
+                break;
+            case 'member':
+                return '/checkout';
+                break;
+            default:
+                return '/home';
+                break;
         }
     }
 }
